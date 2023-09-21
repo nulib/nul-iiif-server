@@ -1,0 +1,38 @@
+version: 0.1
+staging:
+  global:
+    parameters:
+      stack_name: nul-iiif-server
+  build:
+    parameters:
+      cached: true
+      parallel: true
+  validate:
+    parameters:
+      lint: true
+  deploy:
+    parameters:
+      capabilities: CAPABILITY_IAM CAPABILITY_AUTO_EXPAND
+      confirm_changeset: true
+      region: us-east-1
+      resolve_s3: true
+      s3_prefix: nul-iiif-server
+      parameter_overrides: >
+        Hostname=iiif
+        DomainName=stack.rdc-staging.library.northwestern.edu
+        AllowFromReferers=(devbox|((meadow|dc|digitalcollections)\.rdc-staging))\.library\.northwestern\.edu
+        CertificateArn=arn:aws:acm:us-east-1:625046682746:certificate/9b96a425-ebdf-47eb-8a60-1cb326cae1c5
+        DcApiEndpoint=https://dcapi.rdc-staging.library.northwestern.edu/api/v2
+        SourceBucket=stack-s-pyramid-tiffs
+  package:
+    parameters:
+      resolve_s3: true
+  sync:
+    parameters:
+      watch: true
+  local_start_api:
+    parameters:
+      warm_containers: EAGER
+  local_start_lambda:
+    parameters:
+      warm_containers: EAGER
